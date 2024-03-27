@@ -1,0 +1,5 @@
+# CMake generation dependency list for this directory.
+D:/T1Otaku/GamesDemo/source/glfw-3.4/glfw-3.4/docs/CMakeLists.txt
+F:/TianyiLi_WorkSpace/CMAKE/share/cmake-3.28/Modules/FindDoxygen.cmake
+F:/TianyiLi_WorkSpace/CMAKE/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake
+F:/TianyiLi_WorkSpace/CMAKE/share/cmake-3.28/Modules/FindPackageMessage.cmake

@@ -1,0 +1,10 @@
+^D:\T1OTAKU\GAMESDEMO\SOURCE\GLFW-3.4\GLFW-3.4\CMAKELISTS.TXT
+setlocal
+F:\TianyiLi_WorkSpace\CMAKE\bin\cmake.exe -SD:/T1Otaku/GamesDemo/source/glfw-3.4/glfw-3.4 -BD:/T1Otaku/GamesDemo/source/glfw-3.4/build --check-stamp-file D:/T1Otaku/GamesDemo/source/glfw-3.4/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

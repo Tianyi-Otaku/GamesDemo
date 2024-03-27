@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\T1Otaku\GamesDemo\source\glfw-3.4\build\CMakeFiles\687a8198728a33d1b7464cf7779ddcdd\uninstall.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\T1Otaku\GamesDemo\source\glfw-3.4\glfw-3.4\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\T1Otaku\GamesDemo\source\glfw-3.4\build\CMakeFiles\uninstall" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{EC18FD61-671A-37F5-9D70-E74C4FCBC7C0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
