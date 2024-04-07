@@ -16,10 +16,15 @@ int main(void) {
 	unsigned int vao = opengl.vertexMap();
 
 	while (!glfwWindowShouldClose(window)) {
-		
+		//绘图
 		glBindVertexArray(vao);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		
+		//Uniform
+		//int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+		//glUseProgram(shaderProgram);
+
 		glfwSwapBuffers(window);//交换缓冲区
 		glfwPollEvents();//处理事件
 	}
