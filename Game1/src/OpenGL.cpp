@@ -1,28 +1,12 @@
 #include"OpenGL.h"
-
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 acolor;\n"
-"out vec3 ourcolor;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"   ourcolor = acolor;\n"
-"}\0";
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec3 ourcolor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(ourcolor, 1.0f);\n"
-"}\n\0";
+#include"Log.h"
 
 float vertices[] = {
-	0.5f, 0.5f, 0.0f,1.0f,0.0f,0.0f,   // 右上角
-	0.5f, -0.5f, 0.0f,0.0f,1.0f,0.0f,  // 右下角
-	-0.5f, -0.5f, 0.0f,0.0f,0.0f,1.0f, // 左下角
-	-0.5f, 0.5f, 0.0f,1.0f,1.0f,1.0f   // 左上角
+	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+		0.5f, 0.5f, 0.0f,		 1.0f,0.0f,0.0f,	1.0f,1.0f,			// 右上角
+		0.5f, -0.5f, 0.0f,		0.0f,1.0f,0.0f,		1.0f,0.0f,		   	// 右下角
+		-0.5f, -0.5f, 0.0f,		0.0f,0.0f,1.0f,		0.0f,0.0f,			// 左下角
+		-0.5f, 0.5f, 0.0f,		1.0f,1.0f,1.0f,		0.0f,1.0f			// 左上角
 };
 
 unsigned int indices[] = {
@@ -37,7 +21,6 @@ unsigned int indices[] = {
 OpenGL::OpenGL() {
 	glfwInit();
 }	
-
 GLFWwindow* OpenGL::getWindow() {
 	//初始化
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -45,19 +28,24 @@ GLFWwindow* OpenGL::getWindow() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	//创建窗口
 	GLFWwindow * window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+	if(window == NULL)
+	{
+		logs.error("Failed to create GLFW window");
+		glfwTerminate();
+		return NULL;
+	}
 	glfwMakeContextCurrent(window);
 	//GLAD初始化
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	std::cout << "Failed to initialize GLAD" << std::endl;
+		logs.error("Failed to initialize GLAD");
+		//std::cout << "Failed to initialize GLAD" << std::endl;
 	//后配置
 	return window;
 }
-
 OpenGL::~OpenGL() {
 	glfwTerminate();
 }
 
-//
 unsigned int OpenGL::vertexMap() {
 	unsigned int VAO;//顶点数组对象：Vertex Array Object，VAO
 	unsigned int VBO;//顶点缓冲对象：Vertex Buffer Object，VBO
@@ -75,33 +63,71 @@ unsigned int OpenGL::vertexMap() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	//3.设定顶点属性指针
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * (sizeof(float)), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * (sizeof(float)), (void*)(3 * (sizeof(float))));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * (sizeof(float)), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * (sizeof(float)), (void*)(3 * (sizeof(float))));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * (sizeof(float)), (void*)(6 * (sizeof(float))));
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	return VAO;
 }
 
-
-unsigned int Shader::VertexShader() {
+std::string Shader::ShaderSource(std::string dataPath) {
+	std::ifstream fin;
+	fin.open(dataPath);
+	if (fin.is_open() == false) {
+		logs.error("错误：打开文件失败:" + dataPath);
+		return nullptr;
+	}
+	else {
+		std::string data;
+		char tmp[1024];
+		while (fin.getline(tmp,1024)) {
+			data += tmp;
+			data += '\n';
+		}
+		return data;
+	}
+}
+unsigned int Shader::VertexShader(std::string shaderSourcePath) {
+	std::string data = ShaderSource(shaderSourcePath);
+	const char* vertexShaderSource = data.c_str();
 	unsigned int vertexShader;
 	//1.创建
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	//2.输入数据
-	glShaderSource(vertexShader,1,&vertexShaderSource,NULL);
+	glShaderSource(vertexShader,1,&vertexShaderSource, NULL);
 	//3.编译
 	glCompileShader(vertexShader);
+	//检错
+	int  success;
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		logs.error("ERROR::SHADER::VERTEX::COMPILATION_FAILED");
+	}
 	return vertexShader;
 }
-
-unsigned int Shader::FragmentShader() {
+unsigned int Shader::FragmentShader(std::string shaderSourcePath) {
+	std::string data = ShaderSource(shaderSourcePath);
+	const char* fragmentShaderSource = data.c_str();
 	unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
+	//检错
+	int  success;
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		logs.error("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED");
+	}
 	return fragmentShader;
 }
-
 unsigned int Shader::ShaderProgram(unsigned int &vertexShader,unsigned int &fragmentShader) {
 	//1.创建
 	unsigned int shaderProgram = glCreateProgram();
@@ -115,5 +141,15 @@ unsigned int Shader::ShaderProgram(unsigned int &vertexShader,unsigned int &frag
 	//5.删除
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	//检错
+	int  success;
+	glGetProgramiv(shaderProgram, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[512];
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		logs.error("ERROR::PROGRAM::FAILED");
+	}
 	return shaderProgram;
 }

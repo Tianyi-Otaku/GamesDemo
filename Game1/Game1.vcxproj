@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\glad\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\OpenGL.cpp" />
@@ -139,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="include\OpenGL.h" />
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="include\Log.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
