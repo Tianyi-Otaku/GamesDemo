@@ -12,6 +12,8 @@ public:
 	
 	unsigned int vertexMap();
 
+	void texture(unsigned int& n, std::string dataPath, unsigned int type);
+
 	~OpenGL();
 };
 

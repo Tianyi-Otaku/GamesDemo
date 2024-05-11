@@ -1,6 +1,6 @@
 #include"OpenGL.h"
 #include"Log.h"
-
+#include<stb_image.h>
 float vertices[] = {
 	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
 		0.5f, 0.5f, 0.0f,		 1.0f,0.0f,0.0f,	1.0f,1.0f,			// 右上角
@@ -71,6 +71,27 @@ unsigned int OpenGL::vertexMap() {
 	glEnableVertexAttribArray(2);
 	return VAO;
 }
+void OpenGL::texture(unsigned int& texture_, std::string dataPath,unsigned int type) {
+	//1. 数据
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load(dataPath.c_str(), &width, &height, &nrChannels, 0);
+	//2. 纹理采样
+	glGenTextures(1, &texture_);
+	glBindTexture(GL_TEXTURE_2D, texture_);
+	//3.设置属性
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//4.加载纹理
+	glTexImage2D(GL_TEXTURE_2D, 0, type, width, height, 0, type, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	//5.释放数据
+	stbi_image_free(data);
+	
+}
+
 
 std::string Shader::ShaderSource(std::string dataPath) {
 	std::ifstream fin;
